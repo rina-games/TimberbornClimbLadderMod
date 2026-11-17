@@ -1,0 +1,5 @@
+bin/
+obj/
+Scripts/*.dll
+*.user
+.DS_Store

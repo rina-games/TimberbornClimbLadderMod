@@ -1,0 +1,4 @@
+ID,Text,Comment
+Building.RopeLadder.DisplayName,攀爬梯,-
+Building.RopeLadder.Description,"1×1 道路。竖着叠高，把楼下路网接到高楼各层门口。也可同层短距离平铺。邻格道路多会自动接上。按 R 转向，用删除工具拆除。",-
+Building.RopeLadder.FlavorDescription,"一格一根。想爬多高，就再叠一格。",-

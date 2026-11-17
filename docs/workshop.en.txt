@@ -1,0 +1,60 @@
+[h1]Climb Ladder / 攀爬梯[/h1]
+Version 0.1.0
+
+Workshops on the third floor, housing stacked high, but beavers cannot reach the door?
+[b]Climbing Ladder[/b] is a 1×1 path building. The main play is to [b]stack it upward[/b] along a wall or scaffold, linking ground roads to each floor's entrance. Same path tools, same demolition tool — no extra mod UI.
+
+You can lay a few cells flat on one level for a very short gap sometimes; vertical access is what this mod is for.
+
+[h2]Requirements[/h2]
+[list]
+[*] Game version 1.1.0.0 or newer
+[/list]
+
+Fully quit the game after changing the mod list.
+
+[h2]Unlock & cost[/h2]
+Unlock Climbing Ladder in the science panel.
+[list]
+[*] Science: 100
+[*] Build: 1 log per cell
+[/list]
+
+[h2]How to use[/h2]
+[olist]
+[*] Paths → Climbing Ladder
+[*] From a cell with ground/road, stack upward to the floor you need
+[*] Align the top with the door; connect the bottom to your road network
+[*] Press R to rotate when needed
+[/olist]
+
+Features:
+[list]
+[*] 1×1×1 per floor — vertical shafts for tall bases
+[*] Can share a cell with vanilla road (no Path slot)
+[*] Neighbors usually auto-connect
+[*] Box-select demolition removes a full column
+[/list]
+
+[h2]vs vanilla stairs[/h2]
+[list]
+[*] Stairs are bulkier and harder to pack along an outside wall
+[*] Ladder segments are real roads — district and doorstep rules apply
+[*] Long river bridges: vanilla paths are usually simpler; this mod targets going up
+[/list]
+
+[h2]FAQ[/h2]
+[b]Upper floor disconnected?[/b]
+Check door alignment and road at the base; rebuild top or bottom if needed.
+
+[b]Only for water?[/b]
+Short flat spans work, but the mod is built for multi-story vertical links.
+
+[h2]Feedback & source[/h2]
+[list]
+[*] Email: jove.rina@outlook.com
+[*] GitHub: [url=https://github.com/rina-games/TimberbornClimbLadderMod]https://github.com/rina-games/TimberbornClimbLadderMod[/url]
+[/list]
+
+[h2]Suggested tags[/h2]
+New content · Paths

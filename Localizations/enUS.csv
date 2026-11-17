@@ -1,0 +1,4 @@
+ID,Text,Comment
+Building.RopeLadder.DisplayName,Climbing Ladder,-
+Building.RopeLadder.Description,"A 1×1 path. Stack it to link ground roads to upper-floor doors in tall buildings. Short flat spans on one level also work. Neighbors usually auto-connect. Press R to rotate; remove with the delete tool.",-
+Building.RopeLadder.FlavorDescription,"One block, one rung. Stack another if you want to go higher.",-
