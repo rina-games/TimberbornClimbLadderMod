@@ -1,6 +1,6 @@
 {
   "Name": "Climb Ladder",
-  "Version": "0.1.0",
+  "Version": "0.1.2",
   "Id": "Jove.ClimbLadder",
   "MinimumGameVersion": "1.1.0.0",
   "Description": "攀爬梯：1×1 道路，竖向叠放，给高层建筑接各层门口；也可短距离平铺。自带建造与删除。Contact: jove.rina@outlook.com",

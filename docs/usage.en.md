@@ -1,8 +1,8 @@
 # Climb Ladder — Player guide
 
-[中文](使用说明.md) · [Steam Workshop text](workshop.en.txt)
+[中文](使用说明.md) · [Steam Workshop text](workshop.en.txt) · [Update notes](../CHANGELOG.players.en.md)
 
-Version 0.1.0
+Version 0.1.2
 
 **Climbing Ladder is mainly for tall buildings.** Stack it in a 1×1 column to link ground-level roads to doors on upper floors so beavers can commute and haul goods. It uses the same materials and demolition rules as other path buildings. You *can* lay it flat on one level for a short gap (narrow ditch, tiny river span) — that is a side option, not the main purpose.
 
@@ -29,7 +29,8 @@ Unlock **Climbing Ladder** in the science panel.
 2. **Stack upward** along a building wall or scaffold:
    - Start on the cell where you already have ground / road.
    - Stack in the same X/Y until you reach the floor height you need.
-   - Place the top cell where beavers can reach the door.
+   - **Three floors, two ladder cells**: stack two segments; the third-floor door is usually on the cell **directly above the top ladder** (e.g. road at Z=4, stack at the same (x,y) to Z=5 and Z=6, door at Z=7). Tie the bottom into your road network.
+   - Other layouts: place the top where beavers can reach the door, or one step sideways from the landing.
 3. **Tie into horizontal roads** at the bottom (and at any intermediate platform).
 4. **On an existing road cell**: road and ladder can share the cell (ladder does not take the Path slot).
 5. Press **R** to rotate when needed (vertical stacks often need the default facing).
@@ -68,16 +69,19 @@ For a single missing tile or a very short bridge at one height, drag sideways an
 ## FAQ
 
 **Upper floor still disconnected?**  
-Check stack height, door alignment, and road at the base; rebuild the top or bottom cell if needed.
+Check road at the base and whether the top aligns with the door (or the door sits directly above the top cell). For three floors / two ladders, see **0.1.2** in the [update notes](../CHANGELOG.players.en.md). Construction sites on the house or ladder can delay the warning; fully quit after mod updates and confirm **0.1.2**.
 
 **Paths do not auto-connect?**  
 Both sides need a road or ladder; fully quit after mod updates.
+
+**Weird movement or stuck beavers?**  
+**0.1.2** fixes many underground / floating / bad-link issues. If it persists, check for a second ladder mod enabled at the same time.
 
 **Only for river crossing?**  
 Possible for a short flat line, but the mod shines on **vertical** access — vanilla paths are often simpler for long flat spans.
 
 **Only one cell deletes?**  
-Use demolition box-select on version **0.1.0**+.
+Use demolition box-select (mod **0.1.2**+ recommended).
 
 ## Feedback & source
 

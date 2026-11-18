@@ -4,18 +4,24 @@ using Timberborn.BlockSystem;
 using Timberborn.EntitySystem;
 using Timberborn.Navigation;
 using Timberborn.PathSystem;
+using Timberborn.TerrainSystem;
 using UnityEngine;
 
 namespace Jove.ClimbLadder
 {
     /// <summary>
     /// 梯子不占 Path 格，才能和已有道路叠在同一格。
-    /// 建筑要算连上道路，门口外面那一格必须和门内那一格接通。
-    /// 梯子放在同一层时，横向道路刚好接上这两格；放在楼下时接不到，这里补上。
+    /// 水平边和向下的边是单向的，不会钻进地下。
+    /// 向上的边在蓝图里是双向的，梯子正上方那一格会进入路网。
+    /// 门口在同一层紧挨着，或正在梯子正上方时，补一条从门口回到梯子的边。
+    /// 门口在顶格的斜上一格时，只从这一列的最高一格先上到落脚点，再横跨一步进门。
+    /// 不从梯子中段抄近路，也不向地下或更远的格子拉边。
     /// </summary>
-    public sealed class RopeLadderLink : BaseComponent, IAwakableComponent, IInitializableEntity, IDeletableEntity, INavMeshListener, IPathConnectionEnforcer
+    public sealed class RopeLadderLink : BaseComponent, IAwakableComponent, IInitializableEntity, IDeletableEntity, INavMeshListener, IPathConnectionEnforcer, IUpdatableComponent
     {
         readonly IBlockService _blocks;
+
+        readonly ITerrainService _terrain;
 
         readonly PreviewBlockService _previews;
 
@@ -27,13 +33,24 @@ namespace Jove.ClimbLadder
 
         readonly List<NavMeshEdge> _added = new List<NavMeshEdge>();
 
+        readonly List<NavMeshEdge> _desired = new List<NavMeshEdge>();
+
+        static RopeLadderLink _nudger;
+
+        static int _pokesLeft;
+
+        static int _pokeSerial;
+
+        int _seenPokeSerial;
+
         BlockObject _block;
 
         bool _listening;
 
-        public RopeLadderLink(IBlockService blocks, PreviewBlockService previews, INavMeshService navMesh, NavMeshGroupService groups, INavMeshListenerEntityRegistry listeners)
+        public RopeLadderLink(IBlockService blocks, ITerrainService terrain, PreviewBlockService previews, INavMeshService navMesh, NavMeshGroupService groups, INavMeshListenerEntityRegistry listeners)
         {
             _blocks = blocks;
+            _terrain = terrain;
             _previews = previews;
             _navMesh = navMesh;
             _groups = groups;
@@ -43,6 +60,27 @@ namespace Jove.ClimbLadder
         public void Awake()
         {
             _block = GetComponent<BlockObject>();
+            if (_nudger == null)
+            {
+                _nudger = this;
+            }
+        }
+
+        public void Update()
+        {
+            if (_nudger == null)
+            {
+                _nudger = this;
+            }
+
+            if (_nudger != this || _pokesLeft <= 0)
+            {
+                return;
+            }
+
+            _pokesLeft--;
+            _pokeSerial++;
+            PokeUpwardEdge();
         }
 
         public void InitializeEntity()
@@ -57,7 +95,8 @@ namespace Jove.ClimbLadder
             }
             _listeners.RegisterNavMeshListener(this);
             _listening = true;
-            LinkNearbyEntrances();
+            SyncEntranceLinks();
+            _pokesLeft = 2;
         }
 
         public void DeleteEntity()
@@ -66,6 +105,11 @@ namespace Jove.ClimbLadder
             {
                 _listeners.UnregisterNavMeshListener(this);
                 _listening = false;
+            }
+
+            if (_nudger == this)
+            {
+                _nudger = null;
             }
             for (int i = 0; i < _added.Count; i++)
             {
@@ -76,10 +120,37 @@ namespace Jove.ClimbLadder
 
         public void OnNavMeshUpdated(NavMeshUpdate navMeshUpdate)
         {
-            if (navMeshUpdate.UpdatedRoads)
+            if (!navMeshUpdate.UpdatedRoads)
             {
-                LinkNearbyEntrances();
+                return;
             }
+
+            SyncEntranceLinks();
+            if (_seenPokeSerial != _pokeSerial)
+            {
+                _seenPokeSerial = _pokeSerial;
+                return;
+            }
+
+            _pokesLeft = 2;
+        }
+
+        void PokeUpwardEdge()
+        {
+            if (_block == null || !_block.Positioned)
+            {
+                return;
+            }
+
+            Vector3Int origin = _block.Coordinates;
+            Vector3Int above = new Vector3Int(origin.x, origin.y, origin.z + 1);
+            int group = _groups.GetDefaultGroupId();
+            NavMeshEdge up = NavMeshEdge.CreateGrouped(origin, above, group, true, 1f);
+            NavMeshEdge down = NavMeshEdge.CreateGrouped(above, origin, group, true, 1f);
+            _navMesh.RemoveEdge(up);
+            _navMesh.AddEdge(up);
+            _navMesh.RemoveEdge(down);
+            _navMesh.AddEdge(down);
         }
 
         public bool CanConnectPath(Vector3Int origin, Vector3Int target)
@@ -117,24 +188,42 @@ namespace Jove.ClimbLadder
             return IsPathTile(other) || IsLadder(other);
         }
 
-        void LinkNearbyEntrances()
+        void SyncEntranceLinks()
         {
-            if (_block == null || !_block.Positioned || _block.IsPreview)
+            _desired.Clear();
+            if (_block != null && _block.Positioned && !_block.IsPreview)
             {
-                return;
+                CollectUpwardLink(_block.Coordinates);
+                CollectEntranceLinks(_block.Coordinates);
             }
 
-            Vector3Int origin = _block.Coordinates;
-            for (int dz = 0; dz <= 2; dz++)
+            for (int i = _added.Count - 1; i >= 0; i--)
+            {
+                if (!ContainsEdge(_desired, _added[i]))
+                {
+                    _navMesh.RemoveEdge(_added[i]);
+                    _added.RemoveAt(i);
+                }
+            }
+
+            for (int i = 0; i < _desired.Count; i++)
+            {
+                if (!ContainsEdge(_added, _desired[i]))
+                {
+                    _navMesh.AddEdge(_desired[i]);
+                    _added.Add(_desired[i]);
+                }
+            }
+        }
+
+        void CollectEntranceLinks(Vector3Int origin)
+        {
+            for (int dz = -2; dz <= 2; dz++)
             {
                 for (int dx = -2; dx <= 2; dx++)
                 {
                     for (int dy = -2; dy <= 2; dy++)
                     {
-                        if (Mathf.Abs(dx) + Mathf.Abs(dy) > 3)
-                        {
-                            continue;
-                        }
                         Vector3Int cell = origin + new Vector3Int(dx, dy, dz);
                         if (!_blocks.Contains(cell))
                         {
@@ -142,52 +231,151 @@ namespace Jove.ClimbLadder
                         }
                         foreach (BlockObject blockObject in _blocks.GetObjectsAt(cell))
                         {
-                            TryLink(origin, blockObject);
+                            TryCollectEntrance(origin, blockObject);
                         }
                     }
                 }
             }
         }
 
-        void TryLink(Vector3Int origin, BlockObject blockObject)
+        void TryCollectEntrance(Vector3Int origin, BlockObject blockObject)
         {
             if (blockObject == null || blockObject.IsPreview || !blockObject.HasEntrance)
             {
                 return;
             }
-            PositionedEntrance entrance = blockObject.PositionedEntrance;
-            Vector3Int access = entrance.Coordinates;
+
+            Vector3Int access = blockObject.PositionedEntrance.Coordinates;
             Vector3Int delta = access - origin;
-            if (delta.z < 0 || delta.z > 2 || Mathf.Abs(delta.x) + Mathf.Abs(delta.y) > 3)
+            int horizontal = Mathf.Abs(delta.x) + Mathf.Abs(delta.y);
+            if (delta.z < 0 || delta.z > 1 || horizontal > 1)
             {
                 return;
             }
-            EnsureBothWays(origin, access);
-            EnsureBothWays(access, entrance.DoorstepCoordinates);
+
+            if (horizontal == 1 && delta.z == 0)
+            {
+                // 梯子还没盖完时，蓝图边不在正式路网上，两个方向都要自己补。
+                AddDesired(origin, access);
+                AddDesired(access, origin);
+                return;
+            }
+
+            if (horizontal == 0 && delta.z == 1)
+            {
+                LinkUp(origin);
+                return;
+            }
+
+            if (horizontal != 1 || delta.z != 1 || HasLadderAbove(origin))
+            {
+                return;
+            }
+
+            // 顶格斜上方的门口：先爬到梯子正上方的落脚点，再横跨一步。中段梯子不抄这条路。
+            Vector3Int landing = new Vector3Int(origin.x, origin.y, origin.z + 1);
+            if (!CanStand(landing))
+            {
+                return;
+            }
+
+            AddDesired(origin, landing);
+            AddDesired(landing, origin);
+            AddDesired(landing, access);
+            AddDesired(access, landing);
         }
 
-        void EnsureBothWays(Vector3Int start, Vector3Int end)
+        void CollectUpwardLink(Vector3Int origin)
+        {
+            Vector3Int above = new Vector3Int(origin.x, origin.y, origin.z + 1);
+            if (!_blocks.Contains(above) || _terrain.Underground(above))
+            {
+                return;
+            }
+
+            // 工地状态的梯子不会把蓝图边放进正式路网。这里直接把正上方接上，
+            // 三层楼只盖了两层梯时，顶楼门口就在这一格。
+            LinkUp(origin);
+        }
+
+        void LinkUp(Vector3Int origin)
+        {
+            Vector3Int above = new Vector3Int(origin.x, origin.y, origin.z + 1);
+            AddDesired(origin, above);
+            AddDesired(above, origin);
+            if (_loggedUp.Add(origin))
+            {
+                Debug.Log("[ClimbLadder] 向上接通 " + origin + " -> " + above);
+            }
+        }
+
+        static readonly HashSet<Vector3Int> _loggedUp = new HashSet<Vector3Int>();
+
+        void AddDesired(Vector3Int start, Vector3Int end)
         {
             if (start == end)
             {
                 return;
             }
-            EnsureOneWay(start, end);
-            EnsureOneWay(end, start);
+
+            NavMeshEdge edge = NavMeshEdge.CreateGrouped(start, end, _groups.GetDefaultGroupId(), true, 1f);
+            if (!ContainsEdge(_desired, edge))
+            {
+                _desired.Add(edge);
+            }
         }
 
-        void EnsureOneWay(Vector3Int start, Vector3Int end)
+        bool HasLadderAbove(Vector3Int origin)
         {
-            for (int i = 0; i < _added.Count; i++)
+            Vector3Int above = new Vector3Int(origin.x, origin.y, origin.z + 1);
+            if (!_blocks.Contains(above))
             {
-                if (_added[i].Start == start && _added[i].End == end)
+                return false;
+            }
+
+            return _blocks.GetFirstObjectWithComponentAt<RopeLadderLink>(above) != null;
+        }
+
+        bool CanStand(Vector3Int cell)
+        {
+            if (!_blocks.Contains(cell) || _terrain.Underground(cell))
+            {
+                return false;
+            }
+
+            foreach (BlockObject blockObject in _blocks.GetObjectsAt(cell))
+            {
+                if (blockObject == null || blockObject.IsPreview)
                 {
-                    return;
+                    continue;
+                }
+
+                if (blockObject.GetComponent<RopeLadderLink>() != null)
+                {
+                    continue;
+                }
+
+                if (_blocks.GetPathObjectAt(cell) == blockObject)
+                {
+                    continue;
+                }
+
+                return false;
+            }
+
+            return true;
+        }
+
+        static bool ContainsEdge(List<NavMeshEdge> edges, NavMeshEdge edge)
+        {
+            for (int i = 0; i < edges.Count; i++)
+            {
+                if (edges[i] == edge)
+                {
+                    return true;
                 }
             }
-            NavMeshEdge edge = NavMeshEdge.CreateGrouped(start, end, _groups.GetDefaultGroupId(), true, 1f);
-            _navMesh.AddEdge(edge);
-            _added.Add(edge);
+            return false;
         }
 
         bool IsPathTile(Vector3Int cell)

@@ -4,6 +4,8 @@
 
 ![攀爬梯](thumbnail.png)
 
+当前版本 **0.1.2**。
+
 多层楼房、高台仓库，门口在二楼却够不到？原版楼梯要么占地大，要么很难贴着外墙一格格往上接。这个 mod 增加 **攀爬梯**：1×1 的道路建筑，在同一格竖着叠，给高层建筑当「竖向通道」，海狸能上下楼、送货、上班。建造和拆除都用游戏自带的路径、删除工具。
 
 ## 它做什么
@@ -33,6 +35,7 @@ cd .. && bash tools/deploy.sh
 ## 进一步阅读
 
 - 玩家使用说明：[docs/使用说明.md](docs/使用说明.md)
+- 玩家更新说明：[CHANGELOG.players.zh.md](CHANGELOG.players.zh.md)
 - 创意工坊文案：[docs/workshop.zh.txt](docs/workshop.zh.txt) · [docs/workshop.en.txt](docs/workshop.en.txt)
 - 设计与实现记录：[docs/zh.md](docs/zh.md)
 

@@ -24,4 +24,27 @@ fi
 python3 "$REPO/tools/check-localization.py"
 
 echo "deployed -> $DEST"
-find "$DEST" -type f | sort
+
+# 游戏若订阅了创意工坊里的同一份模组，会加载工坊目录而不是上面的本地目录。
+WORKSHOP_ROOT="$HOME/Library/Application Support/Steam/steamapps/workshop/content/1062090"
+if [ -d "$WORKSHOP_ROOT" ]; then
+  while IFS= read -r manifest; do
+    id="$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1])).get("Id",""))' "$manifest")"
+    if [ "$id" = "Jove.ClimbLadder" ]; then
+      workshop="$(dirname "$manifest")"
+      rsync -a --delete "$REPO/Buildings/" "$workshop/Buildings/"
+      rsync -a --delete "$REPO/Blueprints/" "$workshop/Blueprints/"
+      rsync -a --delete "$REPO/Localizations/" "$workshop/Localizations/"
+      rsync -a --delete "$REPO/Sprites/" "$workshop/Sprites/"
+      mkdir -p "$workshop/Scripts"
+      if [ -f "$REPO/Scripts/Jove.ClimbLadder.dll" ]; then
+        cp "$REPO/Scripts/Jove.ClimbLadder.dll" "$workshop/Scripts/Jove.ClimbLadder.dll"
+      fi
+      cp "$REPO/manifest.json" "$workshop/manifest.json"
+      if [ -f "$REPO/thumbnail.png" ]; then
+        cp "$REPO/thumbnail.png" "$workshop/thumbnail.png"
+      fi
+      echo "deployed -> $workshop"
+    fi
+  done < <(find "$WORKSHOP_ROOT" -name manifest.json -print)
+fi

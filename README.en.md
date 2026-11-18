@@ -4,6 +4,8 @@
 
 ![Climb Ladder](thumbnail.png)
 
+Current version **0.1.2**.
+
 Tall workshops, stacked housing, doors on the second floor but no way up? Vanilla stairs are bulky and awkward along an outside wall. This mod adds **Climbing Ladder**: a 1×1 path building you **stack vertically** to link ground-level roads to upper entrances. Beavers climb to work, haul goods, and stay connected to the district network. Build and delete with the game's own path and demolition tools.
 
 ## What it does
@@ -33,6 +35,7 @@ Default install path: `~/Documents/Timberborn/Mods/ClimbLadder`. Fully quit the 
 ## Further reading
 
 - Player guide: [docs/usage.en.md](docs/usage.en.md)
+- Player update notes: [CHANGELOG.players.en.md](CHANGELOG.players.en.md)
 - Steam Workshop text: [docs/workshop.en.txt](docs/workshop.en.txt) · [docs/workshop.zh.txt](docs/workshop.zh.txt)
 - Design notes: [docs/en.md](docs/en.md)
 

@@ -29,7 +29,7 @@
   },
   "BlockObjectNavMeshSettingsSpec": {
     "NoAutoWalls": true,
-    "GenerateFloorsOnStackable": false,
+    "GenerateFloorsOnStackable": true,
     "EdgeGroups": [
       {
         "Cost": 1.0,
@@ -40,127 +40,44 @@
         "IsPath": true,
         "AddedEdges": [
           {
-            "Start": {
-              "X": 0,
-              "Y": 0,
-              "Z": 0
-            },
-            "End": {
-              "X": 1,
-              "Y": 0,
-              "Z": 0
-            },
-            "IsTwoWay": true
+            "Start": { "X": 0, "Y": 0, "Z": 0 },
+            "End": { "X": 1, "Y": 0, "Z": 0 },
+            "IsTwoWay": false
           },
           {
-            "Start": {
-              "X": 0,
-              "Y": 0,
-              "Z": 0
-            },
-            "End": {
-              "X": -1,
-              "Y": 0,
-              "Z": 0
-            },
-            "IsTwoWay": true
+            "Start": { "X": 0, "Y": 0, "Z": 0 },
+            "End": { "X": -1, "Y": 0, "Z": 0 },
+            "IsTwoWay": false
           },
           {
-            "Start": {
-              "X": 0,
-              "Y": 0,
-              "Z": 0
-            },
-            "End": {
-              "X": 0,
-              "Y": 1,
-              "Z": 0
-            },
-            "IsTwoWay": true
+            "Start": { "X": 0, "Y": 0, "Z": 0 },
+            "End": { "X": 0, "Y": 1, "Z": 0 },
+            "IsTwoWay": false
           },
           {
-            "Start": {
-              "X": 0,
-              "Y": 0,
-              "Z": 0
-            },
-            "End": {
-              "X": 0,
-              "Y": -1,
-              "Z": 0
-            },
-            "IsTwoWay": true
+            "Start": { "X": 0, "Y": 0, "Z": 0 },
+            "End": { "X": 0, "Y": -1, "Z": 0 },
+            "IsTwoWay": false
           },
           {
-            "Start": {
-              "X": 0,
-              "Y": 0,
-              "Z": 0
-            },
-            "End": {
-              "X": 0,
-              "Y": 0,
-              "Z": 1
-            },
-            "IsTwoWay": true
-          },
-          {
-            "Start": {
-              "X": 0,
-              "Y": 0,
-              "Z": 0
-            },
-            "End": {
-              "X": 0,
-              "Y": 0,
-              "Z": -1
-            },
+            "Start": { "X": 0, "Y": 0, "Z": 0 },
+            "End": { "X": 0, "Y": 0, "Z": 1 },
             "IsTwoWay": true
           },
           {
             "Start": { "X": 0, "Y": 0, "Z": 0 },
-            "End": { "X": 1, "Y": 0, "Z": 1 },
-            "IsTwoWay": true
-          },
-          {
-            "Start": { "X": 0, "Y": 0, "Z": 0 },
-            "End": { "X": -1, "Y": 0, "Z": 1 },
-            "IsTwoWay": true
-          },
-          {
-            "Start": { "X": 0, "Y": 0, "Z": 0 },
-            "End": { "X": 0, "Y": 1, "Z": 1 },
-            "IsTwoWay": true
-          },
-          {
-            "Start": { "X": 0, "Y": 0, "Z": 0 },
-            "End": { "X": 0, "Y": -1, "Z": 1 },
-            "IsTwoWay": true
-          },
-          {
-            "Start": { "X": 0, "Y": 0, "Z": 0 },
-            "End": { "X": 1, "Y": 0, "Z": -1 },
-            "IsTwoWay": true
-          },
-          {
-            "Start": { "X": 0, "Y": 0, "Z": 0 },
-            "End": { "X": -1, "Y": 0, "Z": -1 },
-            "IsTwoWay": true
-          },
-          {
-            "Start": { "X": 0, "Y": 0, "Z": 0 },
-            "End": { "X": 0, "Y": 1, "Z": -1 },
-            "IsTwoWay": true
-          },
-          {
-            "Start": { "X": 0, "Y": 0, "Z": 0 },
-            "End": { "X": 0, "Y": -1, "Z": -1 },
-            "IsTwoWay": true
+            "End": { "X": 0, "Y": 0, "Z": -1 },
+            "IsTwoWay": false
           }
         ]
       }
     ],
-    "UnblockedCoordinates": [],
+    "UnblockedCoordinates": [
+      {
+        "Group": "",
+        "Coordinates": { "X": 0, "Y": 0, "Z": 0 }
+      }
+    ],
     "BlockedEdges": []
   },
   "BlockObjectSpec": {
@@ -219,6 +136,7 @@
       "Z": 0
     }
   },
+  "BlockObjectNavMeshAdderSpec": {},
   "RopeLadderSpec": {},
   "Children": {
     "#Finished": {

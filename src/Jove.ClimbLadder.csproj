@@ -6,7 +6,7 @@
     <Nullable>disable</Nullable>
     <AssemblyName>Jove.ClimbLadder</AssemblyName>
     <RootNamespace>Jove.ClimbLadder</RootNamespace>
-    <Version>0.1.0</Version>
+    <Version>0.1.2</Version>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <GenerateDependencyFile>false</GenerateDependencyFile>
     <TimberbornManaged Condition="'$(TimberbornManaged)' == ''">$(HOME)/Library/Application Support/Steam/steamapps/common/Timberborn/Timberborn.app/Contents/Resources/Data/Managed</TimberbornManaged>

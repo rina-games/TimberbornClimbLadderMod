@@ -1,5 +1,5 @@
 [h1]Climb Ladder / 攀爬梯[/h1]
-Version 0.1.0
+Version 0.1.2
 
 Workshops on the third floor, housing stacked high, but beavers cannot reach the door?
 [b]Climbing Ladder[/b] is a 1×1 path building. The main play is to [b]stack it upward[/b] along a wall or scaffold, linking ground roads to each floor's entrance. Same path tools, same demolition tool — no extra mod UI.
@@ -23,8 +23,8 @@ Unlock Climbing Ladder in the science panel.
 [h2]How to use[/h2]
 [olist]
 [*] Paths → Climbing Ladder
-[*] From a cell with ground/road, stack upward to the floor you need
-[*] Align the top with the door; connect the bottom to your road network
+[*] From a cell with ground/road, stack upward (three floors / two ladders: door often directly above the top cell; e.g. road at Z=4, stack two cells at the same (x,y) to Z=5 and Z=6, third-floor door at Z=7)
+[*] Align the top with the door or one step sideways; connect the bottom to your road network
 [*] Press R to rotate when needed
 [/olist]
 
@@ -45,7 +45,10 @@ Features:
 
 [h2]FAQ[/h2]
 [b]Upper floor disconnected?[/b]
-Check door alignment and road at the base; rebuild top or bottom if needed.
+Road at the base is required; door at the top or directly above the top cell. Construction may delay the warning. On **0.1.2**, fully quit after updating; rebuild top or bottom if needed.
+
+[b]Beavers clip underground, float, or get stuck?[/b]
+**0.1.2** fixes many bad nav links; do not run two ladder mods together.
 
 [b]Only for water?[/b]
 Short flat spans work, but the mod is built for multi-story vertical links.
